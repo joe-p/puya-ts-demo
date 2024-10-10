@@ -13,8 +13,10 @@ npm i
 > This assumes you have a python installation on your machine, if not see algokit install instructions
 
 ```shell
-pipx install puya 
+pipx install puyapy
 ```
+
+> puya.exe is currently distributed under the puyapy package but will eventually be moved to a puya package. 
 
 ### 3. Test that puya is available (you may need to restart your shell)
 
