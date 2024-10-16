@@ -1,75 +1,76 @@
 import {
-    abimethod, Account,
-    assert,
-    BigUint,
-    biguint, Box, BoxMap, BoxRef, bytes,
-    Bytes,
-    Contract, Global,
-    GlobalState,
-    LocalState, Txn,
-    Uint64,
-    uint64
-} from '@algorandfoundation/algorand-typescript'
-import {DynamicArray, UintN} from "@algorandfoundation/algorand-typescript/arc4";
+  abimethod,
+  Account,
+  assert,
+  BigUint,
+  biguint,
+  Box,
+  BoxMap,
+  BoxRef,
+  bytes,
+  Bytes,
+  Contract,
+  Global,
+  GlobalState,
+  LocalState,
+  Txn,
+  Uint64,
+  uint64,
+  arc4,
+} from "@algorandfoundation/algorand-typescript";
 
 export class HelloWorldContract extends Contract {
-    globalInt = GlobalState({initialValue: Uint64(4)})
-    globalString = GlobalState<string>({key: "customKey"})
+  globalInt = GlobalState({ initialValue: Uint64(4) });
+  globalString = GlobalState<string>({ key: "customKey" });
 
-    localBigInt = LocalState<biguint>()
+  localBigInt = LocalState<biguint>();
 
-    boxOfArray = Box<DynamicArray<UintN<64>>>({key: 'b'})
-    boxMap = BoxMap<Account, bytes>({keyPrefix: ''})
-    boxRef = BoxRef({key: Bytes.fromHex('FF')})
+  boxOfArray = Box<arc4.DynamicArray<arc4.UintN<64>>>({ key: "b" });
+  boxMap = BoxMap<Account, bytes>({ keyPrefix: "" });
+  boxRef = BoxRef({ key: Bytes.fromHex("FF") });
 
-    useState(a: uint64, b: string, c: uint64) {
-        this.globalInt.value *= a
-        if (this.globalString.hasValue) {
-            this.globalString.value += b
-        } else {
-            this.globalString.value = b
-        }
-        if (Txn.sender.isOptedIn(Global.currentApplicationId)) {
-            this.localBigInt(Txn.sender).value = BigUint(c) * BigUint(a)
-        }
+  useState(a: uint64, b: string, c: uint64) {
+    this.globalInt.value *= a;
+    if (this.globalString.hasValue) {
+      this.globalString.value += b;
+    } else {
+      this.globalString.value = b;
     }
-
-    @abimethod({allowActions: ['OptIn']})
-    optIn() {
-
+    if (Txn.sender.isOptedIn(Global.currentApplicationId)) {
+      this.localBigInt(Txn.sender).value = BigUint(c) * BigUint(a);
     }
+  }
 
-    addToBox(x: uint64) {
-        if (!this.boxOfArray.exists) {
-            this.boxOfArray.value = new DynamicArray(new UintN<64>(x))
-        } else {
-            this.boxOfArray.value.push(new UintN<64>(x))
-        }
+  @abimethod({ allowActions: ["OptIn"] })
+  optIn() {}
+
+  addToBox(x: uint64) {
+    if (!this.boxOfArray.exists) {
+      this.boxOfArray.value = new DynamicArray(new UintN<64>(x));
+    } else {
+      this.boxOfArray.value.push(new UintN<64>(x));
     }
+  }
 
-    addToBoxMap(x: string) {
-        this.boxMap.set(Txn.sender, Bytes(x))
+  addToBoxMap(x: string) {
+    this.boxMap.set(Txn.sender, Bytes(x));
+  }
+
+  insertIntoBoxRef(content: bytes, offset: uint64, boxSize: uint64) {
+    assert(offset + content.length < boxSize);
+    if (this.boxRef.exists) {
+      this.boxRef.create({ size: boxSize });
+    } else if (this.boxRef.length !== boxSize) {
+      this.boxRef.resize(boxSize);
     }
+    this.boxRef.splice(offset, offset + content.length, content);
+  }
 
-    insertIntoBoxRef(content: bytes, offset: uint64, boxSize: uint64) {
-        assert(offset + content.length < boxSize)
-        if (this.boxRef.exists) {
-            this.boxRef.create({size: boxSize})
-        } else if (this.boxRef.length !== boxSize) {
-            this.boxRef.resize(boxSize)
-        }
-        this.boxRef.splice(offset, offset + content.length, content)
+  sayHello(name: string, a: uint64): string {
+    return `${this.getHello()} ${name} ${Bytes(a)}`;
+  }
 
-    }
-
-
-    sayHello(name: string, a: uint64) :string {
-        return `${this.getHello()} ${name} ${Bytes(a)}`
-    }
-
-    private getHello() {
-        return 'Hello'
-    }
-
-
+  private getHello() {
+    return "Hello";
+  }
 }
