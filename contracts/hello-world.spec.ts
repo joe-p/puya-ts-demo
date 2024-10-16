@@ -9,7 +9,7 @@ describe("HelloWorldContract", () => {
   it("Logs the returned value when sayHello is called", () => {
     const contract = ctx.contract.create(HelloWorldContract);
 
-    const result = contract.sayHello("Sally", 5);
+    const result = contract.sayHello("Sally");
 
     expect(result).toBe("Hello Sally");
   });

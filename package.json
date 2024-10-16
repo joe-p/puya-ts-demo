@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "puya-ts build contracts/hello-world.algo.ts"
+    "build": "puya-ts build contracts"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@algorandfoundation/algorand-typescript": "^0.0.1-alpha.9",
+    "@algorandfoundation/algorand-typescript": "^0.0.1-alpha.10",
     "@algorandfoundation/algorand-typescript-testing": "^1.0.0-alpha.4",
     "@algorandfoundation/puya-ts": "^1.0.0-alpha.18",
     "@rollup/plugin-typescript": "^12.1.0",
