@@ -21,7 +21,7 @@ pipx install puyapy
 ### 3. Test that puya is available (you may need to restart your shell)
 
 ```shell
-puya.exe
+puya
 ```
 
 Expect to see
