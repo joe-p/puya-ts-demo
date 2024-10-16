@@ -1,7 +1,9 @@
 import {
   abimethod,
   Account,
+  Application,
   assert,
+  assertMatch,
   BigUint,
   biguint,
   Box,
@@ -12,6 +14,7 @@ import {
   Contract,
   Global,
   GlobalState,
+  gtxn,
   LocalState,
   Txn,
   Uint64,
@@ -44,6 +47,11 @@ export class KitchenSinkContract extends Contract {
     }
   }
 
+  @abimethod({ onCreate: "require", allowActions: "NoOp" })
+  createApp() {
+    this.globalInt.value = Global.currentApplicationId.id;
+  }
+
   @abimethod({ allowActions: ["OptIn"] })
   optIn() {}
 
@@ -71,6 +79,15 @@ export class KitchenSinkContract extends Contract {
 
   sayHello(name: string, a: uint64): string {
     return `${this.getHello()} ${name} ${Bytes(a)}`;
+  }
+
+  checkTransaction(pay: gtxn.PaymentTxn) {
+    assertMatch(pay, {
+      amount: { between: [1000, 2000] },
+      lastValid: { greaterThan: Global.round },
+      sender: Txn.sender,
+      receiver: Global.currentApplicationId.address,
+    });
   }
 
   private getHello() {
