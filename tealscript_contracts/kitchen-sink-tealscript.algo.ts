@@ -7,7 +7,7 @@ export class KitchenSinkContract extends Contract {
   localBigInt = LocalStateKey<uint<512>>();
 
   boxOfArray = BoxKey<uint64[]>({ key: "b" });
-  boxMap = BoxMap<Address, uint64>();
+  boxMap = BoxMap<Address, uint64>({ prefix: "" });
   boxRef = BoxKey<bytes>({ key: "ff" });
 
   useState(a: uint64, b: string, c: uint64) {
